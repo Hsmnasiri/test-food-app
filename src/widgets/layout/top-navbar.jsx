@@ -76,12 +76,14 @@ export function TopNavbar() {
   }, [sidenavColor]);
 
   const navPositionClasses = fixedNavbar
-    ? "fixed inset-x-0 top-0"
-    : "relative w-full";
+    ? "fixed top-0 left-0 right-0 xl:left-80"
+    : "relative w-full xl:ml-80";
 
   return (
-    <nav className={`${navPositionClasses} z-50 ${navbarThemeClasses}`}>
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+    <nav
+      className={`${navPositionClasses} z-50 ${navbarThemeClasses} xl:pl-0`}
+    >
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
         <Link to="/dashboard/home" className="flex items-center gap-3">
           <img
             src="/img/logo.png"
@@ -170,7 +172,6 @@ export function TopNavbar() {
 TopNavbar.displayName = "/src/widgets/layout/top-navbar.jsx";
 
 export default TopNavbar;
-
 
 
 
