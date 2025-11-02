@@ -1,8 +1,8 @@
 import { readFileAsDataUrl } from "./files";
 
 const DEFAULT_OPTIONS = {
-  maxDimension: 1280,
-  quality: 0.85,
+  maxDimension: 720,
+  quality: 0.6,
   mimeType: "image/jpeg",
 };
 
@@ -104,11 +104,12 @@ export async function downscaleImageFile(file, options = {}) {
 
   let outputFile = file;
 
-  if (scaled || file.size > 3 * 1024 * 1024) {
+  if (scaled || file.size > 2 * 1024 * 1024) {
     const canvas = document.createElement("canvas");
     canvas.width = targetWidth;
     canvas.height = targetHeight;
     const context = canvas.getContext("2d", { alpha: false });
+    context.clearRect(0, 0, targetWidth, targetHeight);
     if (bitmap) {
       context.drawImage(bitmap, 0, 0, targetWidth, targetHeight);
       releaseBitmap();
@@ -133,6 +134,10 @@ export async function downscaleImageFile(file, options = {}) {
       // Fall back to original file if compression fails.
       outputFile = file;
     }
+
+    context.clearRect(0, 0, targetWidth, targetHeight);
+    canvas.width = 0;
+    canvas.height = 0;
   }
 
   const previewUrl = await readFileAsDataUrl(outputFile);

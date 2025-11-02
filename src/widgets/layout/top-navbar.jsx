@@ -26,6 +26,11 @@ export function TopNavbar() {
     setOpenSidenav(dispatch, false);
   }, [pathname, dispatch]);
 
+  useEffect(() => {
+    document.body.classList.toggle("overflow-hidden", openSidenav);
+    return () => document.body.classList.remove("overflow-hidden");
+  }, [openSidenav]);
+
   const navItems = useMemo(
     () =>
       dashboardRoutes.map(({ path, name }) => ({
@@ -99,20 +104,7 @@ export function TopNavbar() {
             </Typography>
           </div>
         </Link>
-        <div className="hidden items-center gap-3 lg:flex">
-          {navItems.map(({ path, label }) => (
-            <Link key={path} to={path}>
-              <span
-                className={`rounded-full px-4 py-2 text-sm font-semibold capitalize transition ${
-                  isActive(path)
-                    ? `${activePillClasses} shadow shadow-orange-200/60`
-                    : "text-slate-500 hover:bg-orange-100/60"
-                }`}
-              >
-                {label}
-              </span>
-            </Link>
-          ))}
+        <div className="hidden lg:flex">
           <Button
             variant="filled"
             color="orange"
@@ -143,37 +135,6 @@ export function TopNavbar() {
           </IconButton>
         </div>
       </div>
-      {openSidenav && (
-        <div className="border-t border-orange-100 bg-white/95 px-4 pb-4 shadow-inner shadow-orange-100 lg:hidden">
-          <div className="flex flex-col gap-2">
-            {navItems.map(({ path, label }) => (
-              <Link key={path} to={path} onClick={handleToggle}>
-                <span
-                  className={`block rounded-xl px-4 py-3 text-sm font-semibold capitalize ${
-                    isActive(path)
-                      ? `${activePillClasses} shadow-inner`
-                      : "text-slate-500 hover:bg-orange-50"
-                  }`}
-                >
-                  {label}
-                </span>
-              </Link>
-            ))}
-            <Button
-              variant="outlined"
-              color="orange"
-              onClick={() => {
-                handleToggle();
-                handleSignOut();
-              }}
-              className="flex items-center justify-center gap-2 rounded-full border-orange-200 text-[var(--food-primary-dark)]"
-            >
-              <ArrowRightOnRectangleIcon className="h-4 w-4" />
-              Sign Out
-            </Button>
-          </div>
-        </div>
-      )}
     </nav>
   );
 }
@@ -182,7 +143,5 @@ export function TopNavbar() {
 TopNavbar.displayName = "/src/widgets/layout/top-navbar.jsx";
 
 export default TopNavbar;
-
-
 
 
