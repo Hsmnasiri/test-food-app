@@ -5,8 +5,8 @@ import { Button, IconButton, Typography } from "@material-tailwind/react";
 import { useMaterialTailwindController, setOpenSidenav } from "@/context";
 
 const BUTTON_COLOR_MAP = {
-  dark: "blue-gray",
-  white: "blue",
+  dark: "orange",
+  white: "orange",
   green: "green",
   blue: "blue",
   red: "red",
@@ -20,9 +20,9 @@ export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavColor, sidenavType, openSidenav } = controller;
   const sidenavTypes = {
-    dark: "bg-gradient-to-br from-gray-800 to-gray-900",
+    dark: "bg-gradient-to-br from-[var(--food-primary-dark)] via-[var(--food-primary)] to-[#fb923c]",
     white: "bg-white shadow-sm",
-    transparent: "bg-transparent",
+    transparent: "bg-gradient-to-b from-white/80 via-white/70 to-white/60",
   };
 
   const handleClose = () => setOpenSidenav(dispatch, false);
@@ -41,16 +41,27 @@ export function Sidenav({ brandImg, brandName, routes }) {
       <aside
         className={`${sidenavTypes[sidenavType]} ${
           openSidenav ? "translate-x-0" : "-translate-x-80"
-        } fixed top-4 left-4 z-50 h-[calc(100vh-32px)] w-72 rounded-xl border border-blue-gray-100 transition-transform duration-300 xl:translate-x-0`}
+        } fixed top-4 left-4 z-50 h-[calc(100vh-32px)] w-72 rounded-3xl border border-white/40 shadow-xl shadow-orange-300/30 transition-transform duration-300 xl:translate-x-0`}
       >
         <div className="relative">
           <Link to="/dashboard/home" className="py-6 px-8 text-center">
-            <Typography
-              variant="h6"
-              color={sidenavType === "dark" ? "white" : "blue-gray"}
-            >
-              {brandName}
-            </Typography>
+            <div className="flex flex-col items-center gap-2">
+              <img
+                src="/icons/food-log-icon-64.png"
+                alt="Food Log App"
+                className="h-14 w-14 rounded-2xl border border-white/40 shadow-lg shadow-orange-200/40"
+              />
+              <Typography
+                variant="h6"
+                className={`${
+                  sidenavType === "dark"
+                    ? "text-white"
+                    : "text-[var(--food-primary-dark)]"
+                } font-semibold`}
+              >
+                {brandName}
+              </Typography>
+            </div>
           </Link>
           <IconButton
             variant="text"
@@ -70,8 +81,11 @@ export function Sidenav({ brandImg, brandName, routes }) {
                 <li className="mx-3.5 mb-2">
                   <Typography
                     variant="small"
-                    color={sidenavType === "dark" ? "white" : "blue-gray"}
-                    className="font-black uppercase opacity-75"
+                    className={`${
+                      sidenavType === "dark"
+                        ? "text-white/80"
+                        : "text-slate-500"
+                    } font-black uppercase tracking-wide`}
                   >
                     {title}
                   </Typography>
@@ -90,7 +104,13 @@ export function Sidenav({ brandImg, brandName, routes }) {
                             ? "white"
                             : "blue-gray"
                         }
-                        className="flex items-center gap-4 px-4 py-2 capitalize"
+                        className={`flex items-center gap-4 px-4 py-2 capitalize ${
+                          isActive
+                            ? "bg-white/20 text-white"
+                            : sidenavType === "dark"
+                            ? "text-orange-50"
+                            : "text-slate-600"
+                        }`}
                         fullWidth
                       >
                         {icon}
@@ -114,7 +134,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
 }
 
 Sidenav.defaultProps = {
-  brandImg: "/img/logo.png",
+  brandImg: "/icons/food-log-icon-64.png",
   brandName: "Food Log App",
 };
 

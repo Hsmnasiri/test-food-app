@@ -23,10 +23,8 @@ export function TopNavbar() {
   const user = getUser();
 
   useEffect(() => {
-    if (openSidenav) {
-      setOpenSidenav(dispatch, false);
-    }
-  }, [pathname, dispatch, openSidenav]);
+    setOpenSidenav(dispatch, false);
+  }, [pathname, dispatch]);
 
   const navItems = useMemo(
     () =>
@@ -54,25 +52,27 @@ export function TopNavbar() {
   const navbarThemeClasses = useMemo(() => {
     switch (sidenavType) {
       case "dark":
-        return "bg-blue-gray-900 text-white shadow-xl";
+        return "bg-[var(--food-primary-dark)] text-white shadow-xl";
       case "transparent":
-        return "bg-white/70 backdrop-blur-md text-blue-gray-800 shadow-sm";
+        return "bg-white/70 backdrop-blur-md text-slate-800 shadow-sm";
       case "white":
       default:
-        return "bg-white text-blue-gray-800 shadow-md";
+        return "bg-white/90 text-slate-800 shadow-md shadow-orange-100/60 backdrop-blur";
     }
   }, [sidenavType]);
 
   const activePillClasses = useMemo(() => {
     const colorMap = {
-      dark: "bg-blue-gray-900 text-white",
-      white: "bg-blue-600 text-white",
+      dark: "bg-white/20 text-white",
+      white: "bg-[var(--food-primary)] text-white",
       green: "bg-emerald-500 text-white",
       orange: "bg-orange-500 text-white",
       red: "bg-rose-500 text-white",
       pink: "bg-pink-500 text-white",
     };
-    return colorMap[sidenavColor] || "bg-blue-gray-900 text-white";
+    return (
+      colorMap[sidenavColor] || "bg-[var(--food-primary)] text-white"
+    );
   }, [sidenavColor]);
 
   const navPositionClasses = fixedNavbar
@@ -86,22 +86,27 @@ export function TopNavbar() {
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
         <Link to="/dashboard/home" className="flex items-center gap-3">
           <img
-            src="/img/logo.png"
+            src="/icons/food-log-icon-64.png"
             alt="Food Log App"
-            className="h-10 w-10 rounded-full object-contain"
+            className="h-10 w-10 rounded-2xl object-cover shadow-md shadow-orange-200/50"
           />
-          <Typography variant="h5" className="font-semibold text-blue-gray-800">
-            Food Log App
-          </Typography>
+          <div>
+            <Typography variant="h5" className="font-semibold text-[var(--food-primary-dark)]">
+              Food Log App
+            </Typography>
+            <Typography variant="small" className="hidden text-sm text-slate-500 sm:block">
+              Capture meals & stay on track
+            </Typography>
+          </div>
         </Link>
         <div className="hidden items-center gap-3 lg:flex">
           {navItems.map(({ path, label }) => (
             <Link key={path} to={path}>
               <span
-                className={`rounded-full px-4 py-2 text-sm font-medium capitalize transition ${
+                className={`rounded-full px-4 py-2 text-sm font-semibold capitalize transition ${
                   isActive(path)
-                    ? `${activePillClasses} shadow`
-                    : "text-blue-gray-600 hover:bg-blue-gray-50"
+                    ? `${activePillClasses} shadow shadow-orange-200/60`
+                    : "text-slate-500 hover:bg-orange-100/60"
                 }`}
               >
                 {label}
@@ -110,9 +115,9 @@ export function TopNavbar() {
           ))}
           <Button
             variant="filled"
-            color="blue-gray"
+            color="orange"
             onClick={handleSignOut}
-            className="flex items-center gap-2 rounded-full bg-blue-gray-800 normal-case"
+            className="flex items-center gap-2 rounded-full bg-[var(--food-primary)] normal-case shadow-orange-300/50 hover:bg-[var(--food-primary-dark)]"
           >
             <ArrowRightOnRectangleIcon className="h-4 w-4" />
             Sign Out
@@ -120,11 +125,16 @@ export function TopNavbar() {
         </div>
         <div className="flex items-center gap-3 lg:hidden">
           {user?.email && (
-            <Typography variant="small" className="text-blue-gray-500">
+            <Typography variant="small" className="text-slate-500">
               {user.email}
             </Typography>
           )}
-          <IconButton variant="text" color="blue-gray" onClick={handleToggle}>
+          <IconButton
+            variant="text"
+            color="blue-gray"
+            className="text-[var(--food-primary-dark)]"
+            onClick={handleToggle}
+          >
             {openSidenav ? (
               <XMarkIcon className="h-6 w-6" />
             ) : (
@@ -134,29 +144,29 @@ export function TopNavbar() {
         </div>
       </div>
       {openSidenav && (
-        <div className="border-t border-blue-gray-50 bg-white px-4 pb-4 lg:hidden">
+        <div className="border-t border-orange-100 bg-white/95 px-4 pb-4 shadow-inner shadow-orange-100 lg:hidden">
           <div className="flex flex-col gap-2">
-          {navItems.map(({ path, label }) => (
-            <Link key={path} to={path} onClick={handleToggle}>
-              <span
-                className={`block rounded-xl px-4 py-3 text-sm font-medium capitalize ${
-                  isActive(path)
-                    ? `${activePillClasses} shadow`
-                    : "text-blue-gray-600 hover:bg-blue-gray-50"
-                }`}
-              >
-                {label}
-              </span>
-            </Link>
-          ))}
+            {navItems.map(({ path, label }) => (
+              <Link key={path} to={path} onClick={handleToggle}>
+                <span
+                  className={`block rounded-xl px-4 py-3 text-sm font-semibold capitalize ${
+                    isActive(path)
+                      ? `${activePillClasses} shadow-inner`
+                      : "text-slate-500 hover:bg-orange-50"
+                  }`}
+                >
+                  {label}
+                </span>
+              </Link>
+            ))}
             <Button
               variant="outlined"
-              color="blue-gray"
+              color="orange"
               onClick={() => {
                 handleToggle();
                 handleSignOut();
               }}
-              className="flex items-center justify-center gap-2 rounded-full border-blue-gray-200 text-blue-gray-700"
+              className="flex items-center justify-center gap-2 rounded-full border-orange-200 text-[var(--food-primary-dark)]"
             >
               <ArrowRightOnRectangleIcon className="h-4 w-4" />
               Sign Out
@@ -172,8 +182,6 @@ export function TopNavbar() {
 TopNavbar.displayName = "/src/widgets/layout/top-navbar.jsx";
 
 export default TopNavbar;
-
-
 
 
 

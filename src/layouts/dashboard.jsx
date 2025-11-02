@@ -13,26 +13,28 @@ export function Dashboard() {
   const paddingTop = fixedNavbar ? "pt-28" : "pt-8";
 
   return (
-    <div className="min-h-screen bg-blue-gray-50/50">
+    <div className="relative min-h-screen">
       <Sidenav routes={dashboardRoutes} />
       <div className="flex min-h-screen flex-col xl:pl-80">
         <TopNavbar />
         <main
-          className={`${paddingTop} flex-1 px-4 pb-8 transition-all duration-300`}
+          className={`${paddingTop} flex-1 px-4 pb-10 transition-all duration-300`}
         >
-          <div className="mx-auto w-full max-w-6xl space-y-6">
+          <div className="mx-auto w-full max-w-6xl space-y-8">
             <Configurator />
             <IconButton
               size="lg"
               color="white"
-              className="fixed bottom-8 right-8 z-40 hidden rounded-full shadow-blue-gray-900/10 md:flex"
+              className="fixed bottom-8 right-8 z-40 hidden rounded-full shadow-orange-400/40 md:flex"
               ripple={false}
               onClick={() => setOpenConfigurator(dispatch, true)}
             >
-              <Cog6ToothIcon className="h-5 w-5" />
+              <Cog6ToothIcon className="h-5 w-5 text-[var(--food-primary)]" />
             </IconButton>
-            <Outlet />
-            <div className="text-blue-gray-600">
+            <div className="glass-card px-4 py-6 sm:px-8">
+              <Outlet />
+            </div>
+            <div className="pb-6 text-slate-600">
               <Footer />
             </div>
           </div>

@@ -21,13 +21,13 @@ import {
 } from "@/utils/meals";
 
 const colorPalette = {
-  dark: { primary: "#0f172a", secondary: "#334155" },
-  white: { primary: "#4f46e5", secondary: "#818cf8" },
-  green: { primary: "#0f9d58", secondary: "#34d399" },
-  blue: { primary: "#3b82f6", secondary: "#2563eb" },
-  red: { primary: "#ef4444", secondary: "#f87171" },
+  dark: { primary: "#f97316", secondary: "#fb923c" },
+  white: { primary: "#f97316", secondary: "#22d3ee" },
+  green: { primary: "#10b981", secondary: "#34d399" },
+  blue: { primary: "#0ea5e9", secondary: "#38bdf8" },
+  red: { primary: "#f97316", secondary: "#fb923c" },
   pink: { primary: "#ec4899", secondary: "#f472b6" },
-  default: { primary: "#4f46e5", secondary: "#818cf8" },
+  default: { primary: "#f97316", secondary: "#22d3ee" },
 };
 
 export default function FoodLogDashboard() {
@@ -154,7 +154,7 @@ export default function FoodLogDashboard() {
   return (
     <>
       <div className="space-y-8 pb-32 sm:pb-28">
-        <Card className="border border-blue-gray-100 shadow-sm">
+        <Card className="border border-orange-100/60 bg-white/80 shadow-lg shadow-orange-100/60">
           <CardHeader
             floated={false}
             shadow={false}
@@ -162,10 +162,10 @@ export default function FoodLogDashboard() {
           >
             <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <Typography variant="h5" color="blue-gray">
+                <Typography variant="h5" className="text-[var(--food-primary-dark)]">
                   Weekly Calorie Tracker
                 </Typography>
-                <Typography variant="small" className="text-blue-gray-400">
+                <Typography variant="small" className="text-slate-500">
                   Snapshot of your intake over the last seven days
                 </Typography>
               </div>
@@ -178,17 +178,17 @@ export default function FoodLogDashboard() {
 
         <section className="space-y-4">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-            <Typography variant="h5" color="blue-gray">
+            <Typography variant="h5" className="text-[var(--food-primary-dark)]">
               Calorie History
             </Typography>
-            <Typography variant="small" className="text-blue-gray-400">
+            <Typography variant="small" className="text-slate-500">
               Latest meals you&apos;ve logged
             </Typography>
           </div>
           {mealsLoading ? (
-            <Card className="border border-blue-gray-50">
+            <Card className="border border-orange-50 bg-white/70">
               <CardBody>
-                <Typography variant="small" className="text-blue-gray-400">
+                <Typography variant="small" className="text-slate-500">
                   Loading calorie history...
                 </Typography>
               </CardBody>
@@ -200,9 +200,9 @@ export default function FoodLogDashboard() {
               ))}
             </div>
           ) : (
-            <Card className="border border-blue-gray-50">
+            <Card className="border border-orange-50 bg-white/70">
               <CardBody className="flex items-center justify-center">
-                <Typography variant="small" className="text-blue-gray-400">
+                <Typography variant="small" className="text-slate-500">
                   {historyError || "No meal data available."}
                 </Typography>
               </CardBody>
@@ -213,10 +213,10 @@ export default function FoodLogDashboard() {
 
       <div className="fixed bottom-6 left-0 right-0 z-40 flex justify-center px-4 sm:px-6">
         <Button
-          color="blue-gray"
+          color="orange"
           onClick={openCaptureDialog}
           aria-label="Log a meal"
-          className="flex w-full max-w-sm items-center justify-center gap-2 rounded-full bg-black px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white shadow-lg shadow-gray-900/30 transition-all duration-300 hover:bg-black/90 hover:shadow-xl sm:w-auto sm:px-8"
+          className="flex w-full max-w-sm items-center justify-center gap-2 rounded-full bg-[var(--food-primary)] px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white shadow-lg shadow-orange-300/50 transition-all duration-300 hover:bg-[var(--food-primary-dark)] hover:shadow-xl sm:w-auto sm:px-8"
         >
           <PlusIcon className="h-5 w-5" />
           Log Meal

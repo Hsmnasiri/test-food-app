@@ -17,7 +17,7 @@ import {
   TrashIcon,
   CheckIcon,
 } from "@heroicons/react/24/outline";
-import { readFileAsDataUrl } from "@/utils/files";
+import { downscaleImageFile } from "@/utils/image";
 
 const captureLabel = "Capture Photo";
 const uploadLabel = "Upload Photo";
@@ -29,11 +29,13 @@ export function MealCaptureDialog({ open, onClose, onConfirm }) {
   const [previewUrl, setPreviewUrl] = useState("");
   const [draftFile, setDraftFile] = useState(null);
   const [error, setError] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const resetState = useCallback(() => {
     setPreviewUrl("");
     setDraftFile(null);
     setError("");
+    setIsProcessing(false);
   }, []);
 
   const handleClose = useCallback(() => {
@@ -44,16 +46,22 @@ export function MealCaptureDialog({ open, onClose, onConfirm }) {
   const handleFileSelected = useCallback(async (file) => {
     if (!file) return;
 
+    setIsProcessing(true);
     try {
-      const dataUrl = await readFileAsDataUrl(file);
-      setDraftFile(file);
-      setPreviewUrl(dataUrl);
+      const { file: optimizedFile, previewUrl: optimizedPreview } =
+        await downscaleImageFile(file);
+      setDraftFile(optimizedFile);
+      setPreviewUrl(optimizedPreview);
       setError("");
     } catch (err) {
       setError(
         err?.message ||
-          "We couldn't read this file. Please try another photo or format."
+          "We couldn't process this photo. Please try another or reduce its size."
       );
+      setDraftFile(null);
+      setPreviewUrl("");
+    } finally {
+      setIsProcessing(false);
     }
   }, []);
 
@@ -106,8 +114,8 @@ export function MealCaptureDialog({ open, onClose, onConfirm }) {
   }, [open, resetState]);
 
   const canConfirm = useMemo(
-    () => Boolean(draftFile && previewUrl),
-    [draftFile, previewUrl]
+    () => Boolean(draftFile && previewUrl) && !isProcessing,
+    [draftFile, previewUrl, isProcessing]
   );
 
   return (
@@ -124,8 +132,8 @@ export function MealCaptureDialog({ open, onClose, onConfirm }) {
     >
       <DialogHeader className="flex items-center justify-between px-5 py-4">
         <div>
-          <Typography variant="h5">Add Meal Photo</Typography>
-          <Typography variant="small" className="text-blue-gray-400">
+          <Typography variant="h5" className="text-[var(--food-primary-dark)]">Add Meal Photo</Typography>
+          <Typography variant="small" className="text-slate-500">
             Capture a new shot or pick from your gallery
           </Typography>
         </div>
@@ -140,7 +148,7 @@ export function MealCaptureDialog({ open, onClose, onConfirm }) {
       </DialogHeader>
 
       <DialogBody className="space-y-4 px-5 pb-5">
-        <div className="rounded-2xl border border-blue-gray-100 bg-blue-gray-50/60 p-3">
+        <div className="rounded-2xl border border-orange-100/60 bg-orange-50/60 p-3">
           {previewUrl ? (
             <img
               src={previewUrl}
@@ -148,9 +156,9 @@ export function MealCaptureDialog({ open, onClose, onConfirm }) {
               className="h-48 w-full rounded-xl object-cover"
             />
           ) : (
-            <div className="flex h-48 w-full flex-col items-center justify-center rounded-xl bg-white text-blue-gray-300">
+            <div className="flex h-48 w-full flex-col items-center justify-center rounded-xl bg-white text-orange-300">
               <CameraIcon className="mb-3 h-12 w-12" />
-              <Typography variant="small" className="text-blue-gray-300">
+              <Typography variant="small" className="text-orange-300">
                 Your photo preview will appear here
               </Typography>
             </div>
@@ -166,23 +174,30 @@ export function MealCaptureDialog({ open, onClose, onConfirm }) {
             {error}
           </Typography>
         )}
+        {isProcessing && !error && (
+          <Typography variant="small" className="text-slate-500">
+            Optimising photo for upload...
+          </Typography>
+        )}
 
         <div className="flex flex-wrap gap-3">
           {!previewUrl ? (
             <>
               <Button
-                color="indigo"
+                color="orange"
                 className="flex-1 min-w-[140px] flex items-center justify-center gap-2"
                 onClick={triggerCameraPicker}
+                disabled={isProcessing}
               >
                 <CameraIcon className="h-5 w-5" />
                 {captureLabel}
               </Button>
               <Button
                 variant="outlined"
-                color="indigo"
+                color="orange"
                 className="flex-1 min-w-[140px] flex items-center justify-center gap-2"
                 onClick={triggerUploadPicker}
+                disabled={isProcessing}
               >
                 <PhotoIcon className="h-5 w-5" />
                 {uploadLabel}
@@ -191,19 +206,21 @@ export function MealCaptureDialog({ open, onClose, onConfirm }) {
           ) : (
             <>
               <Button
-                color="blue-gray"
+                color="orange"
                 variant="outlined"
                 className="flex-1 min-w-[120px] flex items-center justify-center gap-2"
                 onClick={handleRetake}
+                disabled={isProcessing}
               >
                 <ArrowPathIcon className="h-5 w-5" />
                 Retake
               </Button>
               <Button
                 variant="outlined"
-                color="indigo"
+                color="orange"
                 className="flex-1 min-w-[140px] flex items-center justify-center gap-2"
                 onClick={handleChooseAnother}
+                disabled={isProcessing}
               >
                 <PhotoIcon className="h-5 w-5" />
                 Choose Another
@@ -213,6 +230,7 @@ export function MealCaptureDialog({ open, onClose, onConfirm }) {
                 color="red"
                 className="flex-1 min-w-[100px] flex items-center justify-center gap-2"
                 onClick={handleRemove}
+                disabled={isProcessing}
               >
                 <TrashIcon className="h-5 w-5" />
                 Remove
@@ -239,12 +257,17 @@ export function MealCaptureDialog({ open, onClose, onConfirm }) {
       </DialogBody>
 
       <DialogFooter className="flex items-center justify-between gap-3 px-5 pb-5 pt-0">
-        <Button variant="text" color="blue-gray" onClick={handleClose}>
+        <Button
+          variant="outlined"
+          color="orange"
+          onClick={handleClose}
+          className="border-orange-200 text-[var(--food-primary-dark)] hover:bg-orange-50"
+        >
           Cancel
         </Button>
         <Button
-          color="indigo"
-          className="flex items-center justify-center gap-2"
+          color="orange"
+          className="flex items-center justify-center gap-2 shadow-sm shadow-orange-200/60"
           onClick={handleConfirm}
           disabled={!canConfirm}
         >
